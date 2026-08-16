@@ -55,7 +55,7 @@ function render(){
 function card(q,n){
  return `<div class="card"><div class="meta">${esc(q.exam)} • ${esc(q.shift)}</div><span class="topic">${esc(q.subject)} • ${esc(q.topic)}</span>
 <div class="q">${esc(q.question)}</div>
-onclick="${practiceMode?'selectOption('+JSON.stringify(q.id)+','+i+')':''}"
+onclick="${practiceMode?'selectOption('+q.id+','+i+')':''}"
 <div id="sol-${q.id}" class="sol"><b>💡 Solution</b><br>${esc(q.solution)}</div>
 ${practiceMode?`<button class="btn green" onclick="showSol(${q.id})">👁️ Show Solution</button>`:""}
 </div>`}
