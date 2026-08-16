@@ -63,7 +63,7 @@ function showAll(){practiceMode=false;render()}
 function practice(){practiceMode=true;qs.sort(()=>Math.random()-.5);render()}
 
 function selectOption(id, selected){
-  const q = qs.find(x => x.id === id);
+  const q = qs.find(x => String(x.id) === String(id));
   if(!q) return;
 
   const card = [...document.querySelectorAll('.card')].find(el =>
