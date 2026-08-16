@@ -6,7 +6,27 @@
 <title>Smart SSC Question Book</title>
 <style>
 body{font-family:Arial,sans-serif;margin:0;background:#f4f6fa;color:#172033}.top{background:#2563eb;color:#fff;padding:18px 16px;position:sticky;top:0;z-index:3}.top h1{margin:0;font-size:22px}.top p{margin:6px 0 0;opacity:.9}.bar{display:flex;gap:8px;flex-wrap:wrap;padding:12px;background:#fff;position:sticky;top:83px;z-index:2}.btn{border:0;border-radius:12px;padding:11px 14px;font-weight:700;background:#e8eefc;color:#1746a2}.primary{background:#2563eb;color:white}.green{background:#dcfce7;color:#166534}.card{background:#fff;margin:12px;padding:16px;border-radius:16px;box-shadow:0 2px 10px #00000012}.meta{font-size:13px;color:#667085}.topic{display:inline-block;background:#eef2ff;color:#3730a3;border-radius:999px;padding:5px 9px;font-size:12px;margin:5px 0}.q{font-size:18px;line-height:1.6;font-weight:600}.opt{padding:12px;margin:8px 0;border:1px solid #e1e5ec;border-radius:10px}.ans{background:#dcfce7;border-color:#86efac}.sol{display:none;background:#f8fafc;border-left:4px solid #2563eb;padding:12px;margin-top:12px;line-height:1.6}.search{width:100%;box-sizing:border-box;padding:12px;border:1px solid #d8dee9;border-radius:12px;font-size:16px}.empty{text-align:center;padding:40px;color:#667085}.small{font-size:12px;color:#667085}
-</style></head><body>
+
+ .opt{
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.opt.selected{
+  border:2px solid #2563eb;
+  background:#dbeafe;
+}
+
+.opt.correct{
+  border:2px solid #16a34a;
+  background:#dcfce7;
+}
+
+.opt.wrong{
+  border:2px solid #dc2626;
+  background:#fee2e2;
+}
+ </style>
 <div class="top"><h1>📚 Smart SSC Question Book</h1><p>Questions save करो • बार-बार practice करो • solution बाद में देखो</p></div>
 <div class="bar">
 <button class="btn primary" onclick="showAll()">📚 Questions</button>
@@ -35,13 +55,41 @@ function render(){
 function card(q,n){
  return `<div class="card"><div class="meta">${esc(q.exam)} • ${esc(q.shift)}</div><span class="topic">${esc(q.subject)} • ${esc(q.topic)}</span>
 <div class="q">${esc(q.question)}</div>
-${q.options.map((o,i)=>`<div class="opt ${i===q.answer&&practiceMode?'':' '}" onclick="${practiceMode?'showSol('+q.id+')':''}">${i+1}. ${esc(o)}</div>`).join("")}
+${q.options.map((o,i)=>`<div class="opt" onclick="${practiceMode?'selectOption('+q.id+','+i+')':''}">${i+1}. ${esc(o)}</div>`).join("")}
 <div id="sol-${q.id}" class="sol"><b>💡 Solution</b><br>${esc(q.solution)}</div>
 ${practiceMode?`<button class="btn green" onclick="showSol(${q.id})">👁️ Show Solution</button>`:""}
 </div>`}
 function showSol(id){document.getElementById("sol-"+id).style.display="block"}
 function showAll(){practiceMode=false;render()}
 function practice(){practiceMode=true;qs.sort(()=>Math.random()-.5);render()}
+
+function selectOption(id, selected){
+  const q = qs.find(x => x.id === id);
+  if(!q) return;
+
+  const card = [...document.querySelectorAll('.card')].find(el =>
+    el.querySelector('#sol-'+id)
+  );
+
+  if(!card) return;
+
+  const options = card.querySelectorAll('.opt');
+
+  options.forEach((el,i)=>{
+    el.classList.remove('selected','correct','wrong');
+
+    if(i === selected) el.classList.add('selected');
+    if(i === q.answer) el.classList.add('correct');
+  });
+
+  if(selected !== q.answer){
+    options[selected].classList.add('wrong');
+  }
+
+  const sol = document.getElementById('sol-'+id);
+  if(sol) sol.style.display = 'block';
+}
+
 function addQuestion(){
  let q=prompt("Question लिखो:");
  if(!q)return;
