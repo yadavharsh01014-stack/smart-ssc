@@ -1,0 +1,10 @@
+{
+  "name":"Smart SSC Question Book",
+  "short_name":"Smart SSC",
+  "start_url":"./index.html",
+  "display":"standalone",
+  "background_color":"#f5f7fb",
+  "theme_color":"#2563eb",
+  "orientation":"portrait",
+  "description":"SSC questions, notes and practice in one place."
+}

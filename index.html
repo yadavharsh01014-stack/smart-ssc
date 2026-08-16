@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2563eb">
+<title>Smart SSC Question Book</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;background:#f4f6fa;color:#172033}.top{background:#2563eb;color:#fff;padding:18px 16px;position:sticky;top:0;z-index:3}.top h1{margin:0;font-size:22px}.top p{margin:6px 0 0;opacity:.9}.bar{display:flex;gap:8px;flex-wrap:wrap;padding:12px;background:#fff;position:sticky;top:83px;z-index:2}.btn{border:0;border-radius:12px;padding:11px 14px;font-weight:700;background:#e8eefc;color:#1746a2}.primary{background:#2563eb;color:white}.green{background:#dcfce7;color:#166534}.card{background:#fff;margin:12px;padding:16px;border-radius:16px;box-shadow:0 2px 10px #00000012}.meta{font-size:13px;color:#667085}.topic{display:inline-block;background:#eef2ff;color:#3730a3;border-radius:999px;padding:5px 9px;font-size:12px;margin:5px 0}.q{font-size:18px;line-height:1.6;font-weight:600}.opt{padding:12px;margin:8px 0;border:1px solid #e1e5ec;border-radius:10px}.ans{background:#dcfce7;border-color:#86efac}.sol{display:none;background:#f8fafc;border-left:4px solid #2563eb;padding:12px;margin-top:12px;line-height:1.6}.search{width:100%;box-sizing:border-box;padding:12px;border:1px solid #d8dee9;border-radius:12px;font-size:16px}.empty{text-align:center;padding:40px;color:#667085}.small{font-size:12px;color:#667085}
+</style></head><body>
+<div class="top"><h1>📚 Smart SSC Question Book</h1><p>Questions save करो • बार-बार practice करो • solution बाद में देखो</p></div>
+<div class="bar">
+<button class="btn primary" onclick="showAll()">📚 Questions</button>
+<button class="btn" onclick="practice()">🎯 Practice</button>
+<button class="btn" onclick="addQuestion()">➕ Add Question</button>
+<button class="btn" onclick="backup()">💾 Backup</button>
+<button class="btn" onclick="restore()">♻️ Restore</button>
+</div>
+<div style="padding:12px"><input id="search" class="search" placeholder="🔎 Topic, subject या question खोजें..." oninput="render()"></div>
+<div id="app"></div>
+<script>
+const seed = [{"id": 1, "exam": "SSC CGL 2025", "shift": "12 Sep 2025 Shift 2", "subject": "Reasoning", "topic": "Ranking / Position", "question": "50 पुस्तकों की एक पंक्ति में, पुस्तक A बायें से 15वें स्थान पर है और पुस्तक B दायें से 20वें स्थान पर है। उनके बीच कितनी पुस्तकें हैं?", "options": ["17", "15", "12", "10"], "answer": 1, "solution": "B की बायें से स्थिति = 50 − 20 + 1 = 31। A और B के बीच पुस्तकें = 31 − 15 − 1 = 15। सही उत्तर: विकल्प 2।"}, {"id": 2, "exam": "SSC CGL 2025", "shift": "12 Sep 2025 Shift 3", "subject": "Reasoning", "topic": "Coding-Decoding", "question": "एक निश्चित कूट प्रणाली में: 'dream focus build skill' को trq, xnz, hmd, clv के रूप में कूटबद्ध किया जाता है। 'focus logic dream' को trq, jkp, xnz के रूप में कूटबद्ध किया जाता है। 'trust logic build dream' को xnj, clv, jkp, trq के रूप में कूटबद्ध किया जाता है। 'build skill logic trust' का कूट क्या है?", "options": ["clv, hmd, jkp, xnj", "clv, xnj, jkp, trq", "hmd, xnz, jkp, xnj", "hmd, clv, xnj, xnz"], "answer": 0, "solution": "dream = trq और xnz में common है; focus = trq, xnz में है, इसलिए skill = hmd या clv में से शेष। तीसरी पंक्ति से build = clv, logic = jkp, trust = xnj। अतः build skill logic trust = clv, hmd, jkp, xnj। सही उत्तर: विकल्प 1।"}, {"id": 3, "exam": "SSC CGL 2025", "shift": "12 Sep 2025 Shift 3", "subject": "Maths", "topic": "Linear Equations", "question": "यदि x + 2y = 14 और x − y = 5 है, तो x ज्ञात कीजिए।", "options": ["6", "4", "8", "10"], "answer": 2, "solution": "x − y = 5 ⇒ x = 5 + y। पहले समीकरण में: 5 + y + 2y = 14 ⇒ 3y = 9 ⇒ y = 3। इसलिए x = 5 + 3 = 8। सही उत्तर: विकल्प 3।"}, {"id": 4, "exam": "SSC CGL 2025", "shift": "12 Sep 2025 Shift 3", "subject": "Reasoning", "topic": "Mathematical Operations", "question": "यदि 6 $ 2 = 20 और 4 $ 3 = 19 है, तो 5 $ 2 = ?", "options": ["18", "17", "16", "15"], "answer": 1, "solution": "Pattern: a $ b = a×b + a+b। 6×2 + 6+2 = 12+8 = 20; 4×3 + 4+3 = 12+7 = 19। इसलिए 5×2 + 5+2 = 10+7 = 17। सही उत्तर: विकल्प 2।"}, {"id": 5, "exam": "SSC CGL 2025", "shift": "12 Sep 2025 Shift 3", "subject": "Reasoning", "topic": "Mathematical Operations", "question": "यदि 5 @ 3 = 28 और 4 @ 2 = 18 है, तो 6 @ 4 का मान क्या है?", "options": ["40", "52", "64", "76"], "answer": 0, "solution": "Pattern: a @ b = a² + b। 5²+3 = 28 और 4²+2 = 18। इसलिए 6 @ 4 = 6²+4 = 36+4 = 40। सही उत्तर: विकल्प 1।"}, {"id": 6, "exam": "SSC CGL 2025", "shift": "12 Sep 2025 Shift 3", "subject": "Reasoning", "topic": "Coded Relation / Symbol", "question": "यदि a % b = 37, जहाँ a % b = a + 2b है, तो a और b का मान क्या है?", "options": ["25, 5", "27, 5", "16, 10", "27, 10"], "answer": 1, "solution": "जाँच करें: 27 + 2×5 = 27 + 10 = 37। इसलिए a = 27 और b = 5। सही उत्तर: विकल्प 2।"}, {"id": 7, "exam": "SSC CGL 2025", "shift": "12 Sep 2025 Shift 3", "subject": "Reasoning", "topic": "Operator Interchange", "question": "यदि + = ×, − = +, × = ÷ है, तो 10 + 2 − 4 × 2 = ?", "options": ["10", "19", "22", "24"], "answer": 2, "solution": "चिन्ह बदलने पर 10 × 2 + 4 ÷ 2। BODMAS के अनुसार = 20 + 2 = 22। सही उत्तर: विकल्प 3।"}, {"id": 8, "exam": "SSC CGL 2025", "shift": "12 Sep 2025 Shift 3", "subject": "Maths", "topic": "Tournament / Pairing", "question": "7 खिलाड़ियों के एक टूर्नामेंट में, प्रत्येक खिलाड़ी दूसरे खिलाड़ी से एक बार खेलता है। कुल कितने मैच हैं?", "options": ["21", "42", "36", "28"], "answer": 0, "solution": "हर जोड़ी एक मैच खेलती है। सूत्र n(n−1)/2। n = 7 ⇒ 7×6/2 = 21। सही उत्तर: विकल्प 1।"}];
+let qs=JSON.parse(localStorage.getItem("smart_ssc_questions")||"null")||seed;
+localStorage.setItem("smart_ssc_questions",JSON.stringify(qs));
+let practiceMode=false, idx=0;
+function save(){localStorage.setItem("smart_ssc_questions",JSON.stringify(qs))}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function render(){
+ let term=(document.getElementById("search")?.value||"").toLowerCase();
+ let arr=qs.filter(q=>(q.question+" "+q.subject+" "+q.topic+" "+q.exam).toLowerCase().includes(term));
+ if(practiceMode){arr=arr.length?arr:[qs[idx%qs.length]]}
+ const app=document.getElementById("app");
+ if(!arr.length){app.innerHTML='<div class="empty">अभी कोई question नहीं मिला।</div>';return}
+ app.innerHTML=arr.map((q,n)=>card(q,n)).join("");
+}
+function card(q,n){
+ return `<div class="card"><div class="meta">${esc(q.exam)} • ${esc(q.shift)}</div><span class="topic">${esc(q.subject)} • ${esc(q.topic)}</span>
+<div class="q">${esc(q.question)}</div>
+${q.options.map((o,i)=>`<div class="opt ${i===q.answer&&practiceMode?'':' '}" onclick="${practiceMode?'showSol('+q.id+')':''}">${i+1}. ${esc(o)}</div>`).join("")}
+<div id="sol-${q.id}" class="sol"><b>💡 Solution</b><br>${esc(q.solution)}</div>
+${practiceMode?`<button class="btn green" onclick="showSol(${q.id})">👁️ Show Solution</button>`:""}
+</div>`}
+function showSol(id){document.getElementById("sol-"+id).style.display="block"}
+function showAll(){practiceMode=false;render()}
+function practice(){practiceMode=true;qs.sort(()=>Math.random()-.5);render()}
+function addQuestion(){
+ let q=prompt("Question लिखो:");
+ if(!q)return;
+ let topic=prompt("Topic:");
+ let sol=prompt("Solution:");
+ let opts=[0,1,2,3].map((_,i)=>prompt("Option "+(i+1)+":")||"");
+ let ans=Math.max(0,Math.min(3,(parseInt(prompt("Correct option (1-4):")||"1")-1)));
+ qs.push({id:Date.now(),exam:"My Questions",shift:"Added",subject:prompt("Subject:")||"Other",topic:topic||"General",question:q,options:opts,answer:ans,solution:sol||""});
+ save();render();
+}
+function backup(){
+ const blob=new Blob([JSON.stringify(qs)],{type:"application/json"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="SmartSSC_Backup.json";a.click();
+}
+function restore(){
+ const i=document.createElement("input");i.type="file";i.accept=".json,application/json";
+ i.onchange=()=>{const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{qs=JSON.parse(r.result);save();render();alert("Backup restore हो गया");}catch(e){alert("Backup file गलत है")}};r.readAsText(f)};i.click();
+}
+render();
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+</script></body></html>
